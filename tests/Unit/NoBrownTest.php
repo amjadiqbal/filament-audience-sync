@@ -15,6 +15,8 @@ it('keeps warm colours off badges, modal icons and charts in the source', functi
         ->not->toMatch("/modalIconColor\\('(warning|danger|primary)'\\)/")
         ->not->toMatch("/'warning'/")
         ->not->toMatch('/->chart\(/')
+        // Buttons are solid fills; a red or primary-warm one dims to brown under a modal backdrop.
+        ->not->toMatch("/->color\\('(danger|warning)'\\)/")
         ->not->toMatch('/\b(brown|tan|maroon|sienna|chocolate)\b/i');
 
     // Every confirmation modal sets a gray icon colour.

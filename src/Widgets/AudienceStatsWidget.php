@@ -39,7 +39,7 @@ class AudienceStatsWidget extends StatsOverviewWidget
             return [
                 Stat::make($t('unavailable'), '—')
                     ->description($e->getMessage())
-                    ->color('danger'),
+                    ->color('gray'),
             ];
         }
 

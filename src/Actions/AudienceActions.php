@@ -84,7 +84,8 @@ class AudienceActions
         return Action::make('audienceUnsubscribe')
             ->label(static::t('actions.unsubscribe'))
             ->icon(Heroicon::OutlinedNoSymbol)
-            ->color('danger')
+            // Gray, not red: a solid red button turns a muddy dark red under a modal backdrop (no-warm-fills rule).
+            ->color('gray')
             ->requiresConfirmation()
             ->modalIcon(Heroicon::OutlinedNoSymbol)
             ->modalIconColor('gray')
@@ -144,7 +145,6 @@ class AudienceActions
         return static::bulk('audienceBulkUnsubscribe', 'unsubscribe', $driver)
             ->label(static::t('actions.bulk_unsubscribe'))
             ->icon(Heroicon::OutlinedNoSymbol)
-            ->color('danger')
             ->modalDescription(static::t('actions.bulk_unsubscribe_description'));
     }
 
