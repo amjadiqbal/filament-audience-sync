@@ -197,7 +197,7 @@ class AudienceSyncManager extends Manager
     {
         $d = $this->driver($driver);
 
-        return $this->cached($d, 'stats', fn (): ListStats => $d->stats());
+        return ListStats::fromArray($this->cached($d, 'stats', fn (): array => $d->stats()->toArray()));
     }
 
     /**
@@ -207,7 +207,9 @@ class AudienceSyncManager extends Manager
     {
         $d = $this->driver($driver);
 
-        return $this->cached($d, "campaigns:{$limit}", fn (): array => $d->campaigns($limit));
+        $rows = $this->cached($d, "campaigns:{$limit}", fn (): array => array_map(fn (Campaign $c): array => $c->toArray(), $d->campaigns($limit)));
+
+        return array_map(fn (array $row): Campaign => Campaign::fromArray($row), $rows);
     }
 
     public function membership(Model $record, ?string $driver = null): ?SyncedMember
@@ -319,12 +321,12 @@ class AudienceSyncManager extends Manager
     }
 
     /**
-     * @template T
+     * Caches plain arrays only: Laravel 13's cache does not unserialize objects by default (cache.serializable_classes).
      *
-     * @param  Closure(): T  $callback
-     * @return T
+     * @param  Closure(): array<int|string, mixed>  $callback
+     * @return array<int|string, mixed>
      */
-    protected function cached(AudienceDriver $d, string $what, Closure $callback): mixed
+    protected function cached(AudienceDriver $d, string $what, Closure $callback): array
     {
         $seconds = (int) $this->config->get('audience-sync.cache_seconds', 300);
 

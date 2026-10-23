@@ -179,6 +179,24 @@ it('renders list stats and recent campaigns, cached', function (): void {
     Http::assertSentCount(2);
 });
 
+it('reads cached stats back from a file cache that refuses to unserialize objects (Laravel 13 default)', function (): void {
+    config()->set('cache.default', 'file');
+    config()->set('cache.stores.file.path', sys_get_temp_dir().'/audience-sync-cache-'.uniqid());
+    config()->set('cache.serializable_classes', false);
+    Http::fake([
+        'https://us21.api.mailchimp.com/3.0/lists/aud123?*' => Http::response(TestCase::fixture('mailchimp/list')),
+        'https://us21.api.mailchimp.com/3.0/campaigns?*' => Http::response(TestCase::fixture('mailchimp/campaigns')),
+    ]);
+
+    foreach ([1, 2] as $load) {
+        expect(AudienceSync::stats()->members)->toBe(4812)
+            ->and(AudienceSync::campaigns()[0]->title)->toBe('October product news')
+            ->and(AudienceSync::campaigns()[0]->sentAt?->toDateString())->toBe('2026-10-20');
+    }
+
+    Http::assertSentCount(2);
+});
+
 it('shows a provider error on the widgets instead of failing the dashboard', function (): void {
     Http::fake(['*' => Http::response(TestCase::fixture('mailchimp/api-key-invalid'), 401)]);
 

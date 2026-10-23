@@ -34,4 +34,19 @@ final class Campaign
             'click_rate' => $this->clickRate,
         ];
     }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            (string) ($data['id'] ?? ''),
+            (string) ($data['title'] ?? ''),
+            isset($data['sent_at']) ? CarbonImmutable::parse((string) $data['sent_at']) : null,
+            (int) ($data['recipients'] ?? 0),
+            isset($data['open_rate']) ? (float) $data['open_rate'] : null,
+            isset($data['click_rate']) ? (float) $data['click_rate'] : null,
+        );
+    }
 }
