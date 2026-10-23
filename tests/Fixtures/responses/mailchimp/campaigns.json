@@ -1,0 +1,48 @@
+{
+  "campaigns": [
+    {
+      "id": "c1a2b3",
+      "send_time": "2026-10-20T09:00:00+00:00",
+      "emails_sent": 4790,
+      "settings": {
+        "subject_line": "October product news",
+        "title": "Oct news"
+      },
+      "report_summary": {
+        "opens": 2600,
+        "unique_opens": 2030,
+        "open_rate": 0.4238,
+        "clicks": 410,
+        "subscriber_clicks": 290,
+        "click_rate": 0.0605,
+        "ecommerce": {
+          "total_orders": 0,
+          "total_spent": 0,
+          "total_revenue": 0
+        }
+      }
+    },
+    {
+      "id": "d4e5f6",
+      "send_time": "2026-09-18T09:00:00+00:00",
+      "emails_sent": 4650,
+      "settings": {
+        "subject_line": "",
+        "title": "September digest"
+      },
+      "report_summary": {
+        "opens": 2400,
+        "unique_opens": 1900,
+        "open_rate": 0.4086,
+        "clicks": 350,
+        "subscriber_clicks": 270,
+        "click_rate": 0.0581,
+        "ecommerce": {
+          "total_orders": 0,
+          "total_spent": 0,
+          "total_revenue": 0
+        }
+      }
+    }
+  ]
+}

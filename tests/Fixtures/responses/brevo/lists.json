@@ -1,0 +1,21 @@
+{
+  "lists": [
+    {
+      "id": 7,
+      "name": "Newsletter",
+      "folderId": 1,
+      "uniqueSubscribers": 990,
+      "totalBlacklisted": 15,
+      "totalSubscribers": 980
+    },
+    {
+      "id": 3,
+      "name": "Customers",
+      "folderId": 1,
+      "uniqueSubscribers": 120,
+      "totalBlacklisted": 2,
+      "totalSubscribers": 118
+    }
+  ],
+  "count": 2
+}

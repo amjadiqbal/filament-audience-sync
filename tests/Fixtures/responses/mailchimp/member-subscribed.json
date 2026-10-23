@@ -1,0 +1,47 @@
+{
+  "id": "2b9150605ac374d671a306b5fcee60a0",
+  "email_address": "ada.lovelace@example.com",
+  "unique_email_id": "a1b2c3d4e5",
+  "contact_id": "c0ffee2b9150605a",
+  "full_name": "Ada Lovelace",
+  "web_id": 123456789,
+  "email_type": "html",
+  "status": "subscribed",
+  "merge_fields": {
+    "FNAME": "Ada",
+    "LNAME": "Lovelace",
+    "PHONE": ""
+  },
+  "stats": {
+    "avg_open_rate": 0.5,
+    "avg_click_rate": 0.1
+  },
+  "ip_signup": "",
+  "timestamp_signup": "",
+  "ip_opt": "203.0.113.9",
+  "timestamp_opt": "2026-09-01T10:00:00+00:00",
+  "member_rating": 3,
+  "last_changed": "2026-10-01T10:00:00+00:00",
+  "language": "",
+  "vip": false,
+  "email_client": "",
+  "location": {
+    "latitude": 0,
+    "longitude": 0,
+    "gmtoff": 0,
+    "dstoff": 0,
+    "country_code": "",
+    "timezone": "",
+    "region": ""
+  },
+  "source": "API - Generic",
+  "tags_count": 1,
+  "tags": [
+    {
+      "id": 1,
+      "name": "customer"
+    }
+  ],
+  "list_id": "aud123",
+  "_links": []
+}

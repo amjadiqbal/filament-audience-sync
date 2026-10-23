@@ -1,0 +1,18 @@
+{
+  "lists": [
+    {
+      "id": "aud123",
+      "name": "Newsletter",
+      "stats": {
+        "member_count": 4812
+      }
+    },
+    {
+      "id": "aud456",
+      "name": "Beta testers",
+      "stats": {
+        "member_count": 57
+      }
+    }
+  ]
+}

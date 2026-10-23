@@ -1,0 +1,11 @@
+{
+  "id": 7,
+  "name": "Newsletter",
+  "totalBlacklisted": 15,
+  "totalSubscribers": 980,
+  "uniqueSubscribers": 990,
+  "folderId": 1,
+  "createdAt": "2026-01-10T10:00:00.000+01:00",
+  "campaignStats": [],
+  "dynamicList": false
+}

@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('audience_sync_members', function (Blueprint $table): void {
+            $table->id();
+            $table->morphs('subscribable');
+            $table->string('driver', 40);
+            $table->string('list_id', 100);
+            $table->string('email');
+            $table->string('status', 30);
+            $table->json('tags')->nullable();
+            $table->string('provider_id')->nullable();
+            $table->text('last_error')->nullable();
+            $table->timestamp('synced_at')->nullable();
+            $table->timestamp('unsubscribed_at')->nullable();
+            $table->timestamps();
+
+            $table->unique(['subscribable_type', 'subscribable_id', 'driver', 'list_id'], 'audience_sync_members_record_unique');
+            $table->index(['driver', 'list_id', 'email']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('audience_sync_members');
+    }
+};

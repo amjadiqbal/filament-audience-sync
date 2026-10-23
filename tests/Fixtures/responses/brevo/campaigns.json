@@ -1,0 +1,144 @@
+{
+  "campaigns": [
+    {
+      "id": 101,
+      "name": "October news",
+      "subject": "October news",
+      "type": "classic",
+      "status": "sent",
+      "scheduledAt": "2026-10-01T10:00:00.000Z",
+      "testSent": false,
+      "header": "",
+      "footer": "",
+      "sender": {
+        "name": "Acme",
+        "id": 1,
+        "email": "news@example.com"
+      },
+      "replyTo": "news@example.com",
+      "toField": "",
+      "tag": "",
+      "inlineImageActivation": false,
+      "mirrorActive": true,
+      "recipients": {
+        "lists": [
+          7
+        ],
+        "exclusionLists": []
+      },
+      "statistics": {
+        "globalStats": {
+          "uniqueClicks": 45,
+          "clickers": 45,
+          "complaints": 0,
+          "delivered": 900,
+          "sent": 905,
+          "softBounces": 3,
+          "hardBounces": 2,
+          "uniqueViews": 360,
+          "trackableViews": 360,
+          "unsubscriptions": 1,
+          "viewed": 410,
+          "deferred": 0
+        }
+      },
+      "sentDate": "2026-10-01T10:00:00.000Z",
+      "createdAt": "2026-10-01T10:00:00.000Z",
+      "modifiedAt": "2026-10-01T10:00:00.000Z"
+    },
+    {
+      "id": 100,
+      "name": "Other list promo",
+      "subject": "Other list promo",
+      "type": "classic",
+      "status": "sent",
+      "scheduledAt": "2026-09-25T10:00:00.000Z",
+      "testSent": false,
+      "header": "",
+      "footer": "",
+      "sender": {
+        "name": "Acme",
+        "id": 1,
+        "email": "news@example.com"
+      },
+      "replyTo": "news@example.com",
+      "toField": "",
+      "tag": "",
+      "inlineImageActivation": false,
+      "mirrorActive": true,
+      "recipients": {
+        "lists": [
+          99
+        ],
+        "exclusionLists": []
+      },
+      "statistics": {
+        "globalStats": {
+          "uniqueClicks": 1,
+          "clickers": 1,
+          "complaints": 0,
+          "delivered": 100,
+          "sent": 100,
+          "softBounces": 3,
+          "hardBounces": 2,
+          "uniqueViews": 10,
+          "trackableViews": 10,
+          "unsubscriptions": 1,
+          "viewed": 60,
+          "deferred": 0
+        }
+      },
+      "sentDate": "2026-09-25T10:00:00.000Z",
+      "createdAt": "2026-09-25T10:00:00.000Z",
+      "modifiedAt": "2026-09-25T10:00:00.000Z"
+    },
+    {
+      "id": 99,
+      "name": "September news",
+      "subject": "September news",
+      "type": "classic",
+      "status": "sent",
+      "scheduledAt": "2026-09-01T10:00:00.000Z",
+      "testSent": false,
+      "header": "",
+      "footer": "",
+      "sender": {
+        "name": "Acme",
+        "id": 1,
+        "email": "news@example.com"
+      },
+      "replyTo": "news@example.com",
+      "toField": "",
+      "tag": "",
+      "inlineImageActivation": false,
+      "mirrorActive": true,
+      "recipients": {
+        "lists": [
+          7,
+          3
+        ],
+        "exclusionLists": []
+      },
+      "statistics": {
+        "globalStats": {
+          "uniqueClicks": 30,
+          "clickers": 30,
+          "complaints": 0,
+          "delivered": 800,
+          "sent": 810,
+          "softBounces": 3,
+          "hardBounces": 2,
+          "uniqueViews": 300,
+          "trackableViews": 300,
+          "unsubscriptions": 1,
+          "viewed": 350,
+          "deferred": 0
+        }
+      },
+      "sentDate": "2026-09-01T10:00:00.000Z",
+      "createdAt": "2026-09-01T10:00:00.000Z",
+      "modifiedAt": "2026-09-01T10:00:00.000Z"
+    }
+  ],
+  "count": 3
+}

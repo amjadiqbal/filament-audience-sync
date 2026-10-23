@@ -1,0 +1,7 @@
+{
+  "type": "https://mailchimp.com/developer/marketing/docs/errors/",
+  "title": "Member Exists",
+  "status": 400,
+  "detail": "ada.lovelace@example.com is already a list member. Use PUT to insert or update list members.",
+  "instance": "5a1c0d4e-1b4b-4d2b-8f3a-6c0f1f6d9e22"
+}

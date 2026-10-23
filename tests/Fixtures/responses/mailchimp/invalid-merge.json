@@ -1,0 +1,13 @@
+{
+  "type": "https://mailchimp.com/developer/marketing/docs/errors/",
+  "title": "Invalid Resource",
+  "status": 400,
+  "detail": "Your merge fields were invalid.",
+  "instance": "9e2c1a77-3d4f-4b8e-a0c1-7e5d3c2b1a00",
+  "errors": [
+    {
+      "field": "PHONE",
+      "message": "Please enter a phone number."
+    }
+  ]
+}
