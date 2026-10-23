@@ -67,7 +67,9 @@ return [
         'unsubscribed_help' => 'All time',
         'open_rate' => 'Average open rate',
         'click_rate' => 'Average click rate',
-        'rate_help' => 'Recent campaigns',
+        'unsubscribed_blocklist' => 'Blocklisted contacts in the list',
+        'rate_audience' => 'Audience average',
+        'rate_campaigns' => '{1} Last campaign to this list|[2,*] Last :count campaigns to this list',
         'unavailable' => 'List stats unavailable',
     ],
 

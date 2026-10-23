@@ -240,3 +240,31 @@ it('does not wait longer than max_wait_seconds inside a request', function (): v
     Http::assertSentCount(1);
     Sleep::assertNeverSlept();
 });
+
+it('caps the total wait across retries at max_wait_seconds', function (): void {
+    Http::fake([memberUrl().'*' => Http::response(TestCase::fixture('mailchimp/too-many'), 429, ['Retry-After' => '8'])]);
+
+    expect(fn () => mc()->member('ada.lovelace@example.com'))->toThrow(RateLimitedException::class);
+
+    // 8 s + 8 s slept; a third 8 s would make 24 s > 20 s.
+    Sleep::assertSleptTimes(2);
+    Http::assertSentCount(3);
+});
+
+it('reads a rate-limit reset header sent as a Unix timestamp', function (): void {
+    Http::fake([memberUrl().'*' => Http::sequence()
+        ->push(TestCase::fixture('mailchimp/too-many'), 429, ['X-RateLimit-Reset' => (string) (time() + 3)])
+        ->push(TestCase::fixture('mailchimp/member-subscribed'))]);
+
+    expect(mc()->member('ada.lovelace@example.com')->status)->toBe(Status::Subscribed);
+    Sleep::assertSlept(fn ($d): bool => $d->totalMilliseconds >= 1000 && $d->totalMilliseconds <= 3000, 1);
+});
+
+it('reads Retry-After sent as an HTTP date', function (): void {
+    Http::fake([memberUrl().'*' => Http::sequence()
+        ->push(TestCase::fixture('mailchimp/too-many'), 429, ['Retry-After' => gmdate('D, d M Y H:i:s', time() + 2).' GMT'])
+        ->push(TestCase::fixture('mailchimp/member-subscribed'))]);
+
+    mc()->member('ada.lovelace@example.com');
+    Sleep::assertSlept(fn ($d): bool => $d->totalMilliseconds >= 1000 && $d->totalMilliseconds <= 2000, 1);
+});

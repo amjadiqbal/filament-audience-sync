@@ -27,14 +27,17 @@ puts basic list and campaign stats on your dashboard. It works with Filament 4 a
   model is a subscriber: users, customers, leads, members.
 - **Bulk actions**: subscribe, sync or unsubscribe the selected records. They are queued in chunks, so a thousand
   records never block a request or hit a rate limit head-on.
-- **Status column and entry**: Subscribed, Pending confirmation, Unsubscribed, Cleaned, Archived or Not subscribed,
-  read from a local status table (no API call per row). A red icon marks a record whose last sync failed; hover it
+- **Status column and entry**: Subscribed, Pending confirmation, Unsubscribed, Cleaned (bounced), Archived in
+  provider or Not subscribed, read from a local status table (no API call per row); "Not synced" until the record's
+  first sync. Cleaned and Archived are Mailchimp states. A red icon marks a record whose last sync failed; hover it
   for the reason.
-- **Dashboard widgets**: members, unsubscribes, average open and click rates, and the latest sent campaigns with
-  their open and click rates. Cached for five minutes.
-- **Consent first**: someone who unsubscribed, bounced or was archived in the provider is never subscribed again
-  from your panel. An unsubscribe made here is recorded and blocks that address for good. See
-  [Consent and GDPR](#consent-and-gdpr).
+- **Dashboard widgets**: members, unsubscribes, open and click rates, and the latest sent campaigns with their open
+  and click rates. Cached for five minutes. With Mailchimp the rates are the audience's own averages; with Brevo
+  they average the last campaigns sent to the list, and "Unsubscribed" counts the list's blocklisted contacts.
+- **Consent first**: someone the provider reports as unsubscribed (Mailchimp also: cleaned or archived; Brevo:
+  blocklisted or unsubscribed from the list) is never subscribed again from your panel. An unsubscribe made here is
+  recorded and blocks that address in this panel until the provider itself reports the person subscribed again
+  (they rejoined through its own signup form). See [Consent and GDPR](#consent-and-gdpr).
 - **Drivers**: Mailchimp (audiences, merge fields, tags, double opt-in) and Brevo (lists, attributes). The driver
   contract is ready for more (MailerLite, Kit, your own): see [Adding a provider](#adding-a-provider).
 
@@ -133,7 +136,7 @@ protected function getHeaderActions(): array
     return [
         AudienceActions::subscribe(),
         AudienceActions::update(),
-        AudienceActions::tags(),       // hidden for drivers without tags (Brevo)
+        AudienceActions::tags(),       // hidden for drivers without tags (Brevo; audienceTags() is not sent there either)
         AudienceActions::unsubscribe(),
     ];
 }
@@ -163,8 +166,8 @@ sent. Mailchimp rejects merge fields that do not exist in the audience; the erro
 
 | Operation | What it does | Never does |
 |---|---|---|
-| Subscribe | Reads the contact first. New: adds it (Mailchimp: subscribed, or pending with double opt-in; Brevo: added to the list). Already subscribed or pending: updates fields and tags. | Subscribe anyone unsubscribed, cleaned or archived in the provider, or unsubscribed here. |
-| Sync details | Updates fields and adds tags for an existing member, then stores the status. | Subscribe a non-member, or touch an unsubscribed member's data. |
+| Subscribe | Checks the local record first, then reads the contact. New: adds it (Mailchimp: subscribed, or pending with double opt-in; Brevo: added to the list). A Mailchimp "transactional" contact (never opted in to marketing) is opted in with a PUT. Already subscribed or pending: updates fields and tags. | Subscribe anyone unsubscribed (or, on Mailchimp, cleaned or archived) in the provider, or unsubscribed here. |
+| Sync details | Reads the status from the provider and stores it; for an existing member also updates fields and adds tags. This is also how a local unsubscribe is lifted after the person rejoined through the provider. | Subscribe a non-member, or touch an unsubscribed member's data. |
 | Edit tags (Mailchimp) | Adds and removes tags on an existing member. | Change the status. |
 | Unsubscribe | Mailchimp: sets the member to unsubscribed. Brevo: blocklists the contact (as Brevo's own unsubscribe link does), or with `BREVO_UNSUBSCRIBE_MODE=unlink` only removes it from the list. Records the choice locally either way. | Delete the contact. |
 
@@ -182,9 +185,12 @@ AudienceSync::queue(User::whereNotNull('email_verified_at')->get(), 'subscribe')
 ## Rate limits and queues
 
 A `429` or `5xx` answer, or a dropped connection, is retried up to three times, after the provider's `Retry-After`
-when it sends one, else after 0.5 s, 1 s, 2 s. Inside a web request it never waits more than 20 seconds in total
-per call. A queued chunk that is still rate limited is released and retried later (backoff up to 10 minutes, six
-tries); records are processed one by one, so each operation is safe to repeat. Tune `http`, `queue.chunk`,
+or rate-limit reset header when it sends one (seconds, an HTTP date or a Unix timestamp), else after 0.5 s, 1 s,
+2 s. One call never sleeps more than `max_wait_seconds` (20) in total, in a web request or a queued job. A queued
+chunk that is still rate limited is released for the provider's wait (at least 30 s, at most an hour) and runs
+again, up to six tries; other failures retry after 30 s to 10 minutes. Records are processed one by one, so each
+operation is safe to repeat. Brevo cannot filter campaigns by list, so the campaigns widget reads the account's
+latest 100 sent campaigns and keeps those sent to your list. Tune `http`, `queue.chunk`,
 `queue.connection` and `queue.name` in the config.
 
 ## Who can use it
@@ -217,9 +223,10 @@ collect consent for you. Before you subscribe anyone:
   every user is rarely lawful in the EU/UK.
 - Prefer Mailchimp's double opt-in (`MAILCHIMP_DOUBLE_OPT_IN=true`): the provider then sends the confirmation and
   keeps the proof.
-- Respect unsubscribes. The plugin will not subscribe anyone who unsubscribed, bounced or was archived in the
-  provider, or was unsubscribed from your panel. A person who changes their mind can rejoin through the provider's
-  own signup form; the next sync then shows them as subscribed.
+- Respect unsubscribes. The plugin will not subscribe anyone the provider reports as unsubscribed (on Mailchimp also
+  cleaned or archived; on Brevo blocklisted or unsubscribed from the list), or who was unsubscribed from your panel.
+  A person who changes their mind can rejoin through the provider's own signup form; the next Sync details then
+  shows them as subscribed and lifts the local block.
 - Send only the fields you need, list your provider in your privacy notice, and have a data processing agreement
   with it.
 - On an erasure request, delete the contact in the provider too (this plugin does not delete contacts) and delete

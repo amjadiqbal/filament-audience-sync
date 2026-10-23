@@ -76,6 +76,7 @@ abstract class HttpDriver implements AudienceDriver
         $backoffMs = max(1, (int) ($http['backoff_ms'] ?? 500));
         $maxWait = max(1, (int) ($http['max_wait_seconds'] ?? 20));
         $attempt = 0;
+        $waited = 0.0;
 
         while (true) {
             $response = null;
@@ -97,7 +98,8 @@ abstract class HttpDriver implements AudienceDriver
             $attempt++;
             $wait = $this->retryAfter($response) ?? ($backoffMs * (2 ** ($attempt - 1))) / 1000;
 
-            if ($attempt > $retries || $wait > $maxWait) {
+            // max_wait_seconds caps the total time slept inside this one call, across all retries.
+            if ($attempt > $retries || $waited + $wait > $maxWait) {
                 if ($response === null) {
                     throw new AudienceSyncException(__('filament-audience-sync::audience-sync.errors.connection', ['driver' => $this->name]));
                 }
@@ -105,7 +107,7 @@ abstract class HttpDriver implements AudienceDriver
                 if ($response->status() === 429) {
                     throw new RateLimitedException(
                         __('filament-audience-sync::audience-sync.errors.rate_limited', ['driver' => $this->name]),
-                        (int) max(1, ceil($wait)),
+                        (int) min(3600, max(1, ceil($wait))),
                     );
                 }
 
@@ -113,16 +115,34 @@ abstract class HttpDriver implements AudienceDriver
             }
 
             Sleep::for((int) round($wait * 1000))->milliseconds();
+            $waited += $wait;
         }
     }
 
+    /**
+     * Seconds to wait, from Retry-After (seconds or an HTTP date) or a rate-limit reset header (seconds, or a Unix
+     * timestamp, which some providers send).
+     */
     protected function retryAfter(?Response $response): ?float
     {
         foreach (['Retry-After', 'x-sib-ratelimit-reset', 'X-RateLimit-Reset'] as $header) {
-            $value = $response?->header($header);
+            $value = trim((string) $response?->header($header));
 
-            if (is_string($value) && is_numeric(trim($value))) {
-                return max(0.0, (float) $value);
+            if ($value === '') {
+                continue;
+            }
+
+            if (is_numeric($value)) {
+                $seconds = (float) $value;
+
+                // Anything this large is a timestamp, not a delay.
+                return max(0.0, $seconds > 1_000_000_000 ? $seconds - time() : $seconds);
+            }
+
+            $at = strtotime($value);
+
+            if ($at !== false) {
+                return (float) max(0, $at - time());
             }
         }
 

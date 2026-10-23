@@ -44,19 +44,22 @@ class AudienceStatsWidget extends StatsOverviewWidget
         }
 
         $rate = fn (?float $r): string => $r === null ? '—' : number_format($r, 1).'%';
+        $rateHelp = $s->rateCampaigns > 0
+            ? trans_choice('filament-audience-sync::audience-sync.stats.rate_campaigns', $s->rateCampaigns, ['count' => $s->rateCampaigns])
+            : $t('rate_audience');
 
         return [
             Stat::make($t('members'), number_format($s->members))
                 ->description($s->name !== '' ? $s->name : null)
                 ->color('gray'),
             Stat::make($t('unsubscribed'), $s->unsubscribed === null ? '—' : number_format($s->unsubscribed))
-                ->description($t('unsubscribed_help'))
+                ->description($t($s->unsubscribedIsBlocklist ? 'unsubscribed_blocklist' : 'unsubscribed_help'))
                 ->color('gray'),
             Stat::make($t('open_rate'), $rate($s->openRate))
-                ->description($t('rate_help'))
+                ->description($rateHelp)
                 ->color('gray'),
             Stat::make($t('click_rate'), $rate($s->clickRate))
-                ->description($t('rate_help'))
+                ->description($rateHelp)
                 ->color('gray'),
         ];
     }

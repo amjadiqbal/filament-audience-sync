@@ -173,7 +173,7 @@ it('renders list stats and recent campaigns, cached', function (): void {
     ]);
 
     livewire(AudienceStatsWidget::class)->assertSee('4,812')->assertSee('42.4%')->assertSee('Newsletter');
-    livewire(AudienceStatsWidget::class)->assertSee('6.1%');
+    livewire(AudienceStatsWidget::class)->assertSee('6.1%')->assertSee('Audience average')->assertSee('All time');
     livewire(RecentCampaignsWidget::class)->assertSee('October product news')->assertSee('September digest')->assertSee('42.4%');
 
     Http::assertSentCount(2);
@@ -195,6 +195,19 @@ it('reads cached stats back from a file cache that refuses to unserialize object
     }
 
     Http::assertSentCount(2);
+});
+
+it('labels Brevo stats as blocklisted contacts and an average of this list\'s recent campaigns', function (): void {
+    $this->useDriver('brevo');
+    Http::fake([
+        'https://api.brevo.com/v3/contacts/lists/7' => Http::response(TestCase::fixture('brevo/list')),
+        'https://api.brevo.com/v3/emailCampaigns?*' => Http::response(TestCase::fixture('brevo/campaigns')),
+    ]);
+
+    livewire(AudienceStatsWidget::class)
+        ->assertSee('Blocklisted contacts in the list')
+        ->assertSee('Last 2 campaigns to this list')
+        ->assertSee('38.8%');
 });
 
 it('shows a provider error on the widgets instead of failing the dashboard', function (): void {

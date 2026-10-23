@@ -5,6 +5,21 @@ All notable changes to `filament-audience-sync` are documented here. The format 
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-23
+
+### Fixed
+
+- `max_wait_seconds` now caps the total time slept across the retries of one call, not each single wait.
+- Rate-limit reset headers sent as a Unix timestamp, and `Retry-After` sent as an HTTP date, are read as a wait
+  instead of giving up at once; a released job waits at most an hour.
+
+### Changed
+
+- The stats widget says where its numbers come from: "Audience average" (Mailchimp) or "Last N campaigns to this
+  list" (Brevo), and "Blocklisted contacts in the list" for Brevo's unsubscribed count.
+- Brevo's campaigns widget reads the latest 100 sent campaigns (was 50) before keeping those sent to your list.
+- README: precise consent, status, retry and Brevo behaviour.
+
 ## [1.0.0] - 2026-10-23
 
 ### Added
@@ -18,5 +33,6 @@ All notable changes to `filament-audience-sync` are documented here. The format 
   every error message.
 - `audience-sync:lists` command.
 
-[Unreleased]: https://github.com/amjadiqbal/filament-audience-sync/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/amjadiqbal/filament-audience-sync/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/amjadiqbal/filament-audience-sync/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/amjadiqbal/filament-audience-sync/releases/tag/v1.0.0

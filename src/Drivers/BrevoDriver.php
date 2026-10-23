@@ -15,7 +15,8 @@ use Illuminate\Http\Client\Response;
 
 /**
  * Brevo API v3, one contact list. https://developers.brevo.com/reference
- * Brevo has no contact tags, and double opt-in needs a Brevo template, so neither is supported here.
+ * Brevo has no contact tags (a model's audienceTags() are not sent), and double opt-in needs a Brevo template, so
+ * neither is supported here. Brevo reports no bounced or archived state: only blocklisted and list-unsubscribed.
  */
 class BrevoDriver extends HttpDriver
 {
@@ -147,6 +148,8 @@ class BrevoDriver extends HttpDriver
             unsubscribed: isset($data['totalBlacklisted']) ? (int) $data['totalBlacklisted'] : null,
             openRate: $avg('openRate'),
             clickRate: $avg('clickRate'),
+            rateCampaigns: count($campaigns),
+            unsubscribedIsBlocklist: true,
         );
     }
 
@@ -154,7 +157,8 @@ class BrevoDriver extends HttpDriver
     {
         $data = (array) $this->ok($this->request('get', 'emailCampaigns', [
             'status' => 'sent',
-            'limit' => 50,
+            // Brevo cannot filter campaigns by list: the latest 100 sent campaigns are read and filtered here.
+            'limit' => 100,
             'sort' => 'desc',
             'statistics' => 'globalStats',
             'excludeHtmlContent' => 'true',
