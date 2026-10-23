@@ -15,7 +15,11 @@ puts basic list and campaign stats on your dashboard. It works with Filament 4 a
 [![PHP Version](https://img.shields.io/packagist/php-v/amjadiqbal/filament-audience-sync?style=flat-square)](https://packagist.org/packages/amjadiqbal/filament-audience-sync)
 [![License](https://img.shields.io/packagist/l/amjadiqbal/filament-audience-sync.svg?style=flat-square)](LICENSE.md)
 
-<!-- screenshots -->
+![The Users table with the mailing-list status column and actions in a Filament panel](https://raw.githubusercontent.com/amjadiqbal/filament-audience-sync/main/art/screenshots/users-light.png)
+
+<p align="center">
+  <img alt="List stats and recent campaigns widgets in dark mode" src="https://raw.githubusercontent.com/amjadiqbal/filament-audience-sync/main/art/screenshots/dashboard-dark.png" width="80%">
+</p>
 
 ## What it does
 
